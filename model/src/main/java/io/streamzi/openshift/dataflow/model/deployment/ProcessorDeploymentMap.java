@@ -1,5 +1,6 @@
 package io.streamzi.openshift.dataflow.model.deployment;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,12 +8,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * This class holds a map describing where the ProcessorNodes for a ProcessorFlow
  * should be deployed.
  * @author hhiden
  */
 public class ProcessorDeploymentMap {
+
     private Map<String, ProcessorDeploymentGroup> processorGroups = new HashMap<>();
     private List<String> hosts = new ArrayList<>();
     
@@ -60,4 +63,8 @@ public class ProcessorDeploymentMap {
     public Iterator<ProcessorDeploymentGroup> groupsIterator(){
         return processorGroups.values().iterator();
     }
+
+
+    
+
 }

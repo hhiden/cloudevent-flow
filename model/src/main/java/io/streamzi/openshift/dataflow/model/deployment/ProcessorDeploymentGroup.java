@@ -1,10 +1,11 @@
 package io.streamzi.openshift.dataflow.model.deployment;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
 import java.util.Collection;
+
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,8 +16,10 @@ public class ProcessorDeploymentGroup {
     private String processorUuid;
     private Map<String, ProcessorDeployment> deployments = new HashMap<>();
 
+
     public ProcessorDeploymentGroup() {
     }
+
     
     public ProcessorDeploymentGroup(String processorUuid) {
         this.processorUuid = processorUuid;
@@ -42,6 +45,7 @@ public class ProcessorDeploymentGroup {
     
     public void addDeployment(String hostId, int replicas){
         if(!deployments.containsKey(hostId)){
+
             // Create a new deployment
             deployments.put(hostId, new ProcessorDeployment(hostId, replicas));
         } else {

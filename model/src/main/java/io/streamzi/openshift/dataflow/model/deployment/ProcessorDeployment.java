@@ -1,5 +1,6 @@
 package io.streamzi.openshift.dataflow.model.deployment;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
