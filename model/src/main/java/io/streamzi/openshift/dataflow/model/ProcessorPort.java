@@ -12,10 +12,15 @@ public abstract class ProcessorPort {
     protected String name;
     protected ProcessorNode parent;
     protected List<ProcessorLink> links = new ArrayList<>();
+    protected String transportType = "default";
 
     public ProcessorPort() {
     }
 
+    public ProcessorPort(String name, String transportType){
+        this.name = name;
+        this.transportType = transportType;
+    }
     
     public ProcessorPort(String name) {
         this.name = name;
@@ -44,6 +49,14 @@ public abstract class ProcessorPort {
 
     public void setParent(ProcessorNode parent) {
         this.parent = parent;
+    }
+
+    public String getTransportType() {
+        return transportType;
+    }
+
+    public void setTransportType(String transportType) {
+        this.transportType = transportType;
     }
     
     

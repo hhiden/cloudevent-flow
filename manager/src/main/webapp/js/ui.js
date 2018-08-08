@@ -92,15 +92,21 @@ function exportJson(flowName) {
             outputsArray = new Array();
             settings = {};
 
-            if (block._template.inputs) {
-                for (var j = 0; j < block._template.inputs.length; j++) {
-                    inputsArray.push(block._template.inputs[j]);
+            if(block._template.inputs){
+                for(var j=0;j<block._template.inputs.length;j++){
+                    inputsArray.push({
+                        name: block._template.inputs[j].name,
+                        transportType: block._template.inputs[j].transportType
+                    });
                 }
             }
-
-            if (block._template.outputs) {
-                for (var j = 0; j < block._template.outputs.length; j++) {
-                    outputsArray.push(block._template.outputs[j]);
+            
+            if(block._template.outputs){
+                for(var j=0;j<block._template.outputs.length;j++){
+                    outputsArray.push({
+                        name: block._template.outputs[j].name,
+                        transportType: block._template.outputs[j].transportType
+                    });
                 }
             }
 
@@ -308,8 +314,8 @@ function setupBlocksJs(nodeYamlList) {
                 inputName = sanitize(template.inputs[j]);
                 renameMap[inputName] = template.inputs[j];
                 fields.push({
-                    name: inputName,
-                    type: "string",
+                    name: template.inputs[j].name,
+                    type: template.inputs[j].transportType,
                     attrs: "input"
                 });
             }
@@ -321,8 +327,8 @@ function setupBlocksJs(nodeYamlList) {
                 outputName = sanitize(template.outputs[j]);
                 renameMap[outputName] = template.outputs[j];
                 fields.push({
-                    name: outputName,
-                    type: "string",
+                    name: template.outputs[j].name,
+                    type: template.outputs[j].transportType,
                     attrs: "output"
                 });
             }

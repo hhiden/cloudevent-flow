@@ -10,6 +10,10 @@ public class ProcessorOutputPort extends ProcessorPort {
         super(name);
     }
 
+    public ProcessorOutputPort(String name, String transportType){
+        super(name, transportType);
+    }
+    
     public ProcessorOutputPort() {
         super();
     }

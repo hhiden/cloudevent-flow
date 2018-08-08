@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.streamzi.openshift.dataflow.model.ProcessorFlow;
 import io.streamzi.openshift.dataflow.model.ProcessorLink;
 import io.streamzi.openshift.dataflow.model.ProcessorNode;
-import io.streamzi.openshift.dataflow.model.ProcessorObject;
 import io.streamzi.openshift.dataflow.model.ProcessorOutputPort;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,13 +16,14 @@ import java.util.Map;
  */
 public class SerializedFlow {
     @JsonIgnore
-    private ProcessorFlow flow;
+    protected ProcessorFlow flow;
     
-    private String name;
-    private List<SerializedNode> nodes = new ArrayList<>();
-    private List<SerializedLink> links = new ArrayList<>();
-    private Map<String, String> settings = new HashMap<>();
-    private Map<String, String> globalSettings = new HashMap<>();
+    protected String name;
+    protected List<SerializedNode> nodes = new ArrayList<>();
+    protected List<SerializedLink> links = new ArrayList<>();
+    protected Map<String, String> settings = new HashMap<>();
+    protected Map<String, String> globalSettings = new HashMap<>();
+    protected Map<String, String> deployments = new HashMap<>();
 
     public SerializedFlow() {
     }
@@ -47,6 +47,10 @@ public class SerializedFlow {
         
         for(String key : flow.getGlobalSettings().keySet()){
             globalSettings.put(key, flow.getGlobalSettings().get(key));
+        }
+        
+        for(String key : flow.getDeployments().keySet()){
+            deployments.put(key, flow.getDeployments().get(key));
         }
     }
 
@@ -84,6 +88,14 @@ public class SerializedFlow {
 
     public void setLinks(List<SerializedLink> links) {
         this.links = links;
+    }
+
+    public Map<String, String> getDeployments() {
+        return deployments;
+    }
+
+    public void setDeployments(Map<String, String> deployments) {
+        this.deployments = deployments;
     }
     
     

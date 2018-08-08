@@ -8,7 +8,7 @@ package io.streamzi.openshift.dataflow.tests;
 import io.streamzi.openshift.dataflow.model.ProcessorConstants;
 import io.streamzi.openshift.dataflow.model.ProcessorFlow;
 import io.streamzi.openshift.dataflow.model.ProcessorNode;
-import io.streamzi.openshift.dataflow.model.ProcessorNodeTemplate;
+import io.streamzi.openshift.dataflow.model.template.ProcessorNodeTemplate;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorFlowWriter;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorTemplateYAMLReader;
 import java.io.File;
@@ -71,7 +71,7 @@ public class FunctioningFlowTest {
             flow.linkNodes(source, "output-data", logger, "input-data");
             
             ProcessorFlowWriter writer = new ProcessorFlowWriter(flow);
-            System.out.println(writer.writeToJsonString());
+            System.out.println(writer.writeToIndentedJsonString());
         } else {
             System.out.println(randomSourceYAMLFile.getPath());
             System.out.println(loggerYAMLFile.getPath());

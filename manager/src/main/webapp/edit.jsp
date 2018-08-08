@@ -37,6 +37,7 @@
     <body>
         <input type="text" size="30" id="deploymentName"></input>
         <button onclick="submit()">Submit</button>
+        <button onclick="setDefaultPartitions()">Default Partitions</button>
         <div id="blocks">
 
         </div>
@@ -58,6 +59,16 @@
                 alert("Submitted dataflow: " + flowName);
             });            
 
+        }
+        
+        function setDefaultPartitions(){
+            var flowName = document.getElementById("deploymentName").value;
+            var promise = $.ajax({
+                url: "rest/api/flows/" + flowName + "/defaultdeploymentmap",
+                type: 'GET'
+            }).then(function(){
+                alert("Created default deployment map");
+            })
         }
     </script>
 </html>

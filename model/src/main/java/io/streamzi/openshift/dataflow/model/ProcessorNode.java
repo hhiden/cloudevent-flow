@@ -59,9 +59,33 @@ public class ProcessorNode extends ProcessorObject implements ProcessorConstants
     
     private String transport;
 
+    
     public ProcessorNode() {
     }
 
+    public ProcessorNode getCopy(){
+        ProcessorNode copy = new ProcessorNode();
+        copy.setImageName(imageName);
+        copy.setTemplateId(templateId);
+        copy.setTemplateName(templateName);
+        copy.setUuid(uuid);
+        
+        
+        for(String key : settings.keySet()){
+            copy.settings.put(key, settings.get(key));
+        }
+        
+        for(ProcessorOutputPort port : outputs.values()){
+            copy.addOutput(new ProcessorOutputPort(port.getName(), port.getTransportType()));
+        }
+        
+        for(ProcessorInputPort port : inputs.values()){
+            copy.addInput(new ProcessorInputPort(port.getName(), port.getTransportType()));
+        }
+
+        return copy;
+    }
+    
     public ProcessorFlow getParent() {
         return parent;
     }

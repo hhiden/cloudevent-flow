@@ -1,6 +1,5 @@
 package io.streamzi.openshift;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.fabric8.kubernetes.api.model.ConfigMap;
@@ -9,7 +8,14 @@ import io.fabric8.kubernetes.api.model.ConfigMapList;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.streamzi.openshift.dataflow.model.ProcessorConstants;
 import io.streamzi.openshift.dataflow.model.ProcessorFlow;
-import io.streamzi.openshift.dataflow.model.ProcessorNodeTemplate;
+
+import io.streamzi.openshift.dataflow.model.deployment.DeploymentHost;
+import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeploymentMap;
+import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeploymentMapBuilder;
+import io.streamzi.openshift.dataflow.model.serialization.ProcessorDeploymentMapReader;
+import io.streamzi.openshift.dataflow.model.serialization.ProcessorDeploymentMapWriter;
+
+import io.streamzi.openshift.dataflow.model.template.ProcessorNodeTemplate;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorFlowReader;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorFlowWriter;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorTemplateYAMLReader;
@@ -19,6 +25,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -30,6 +37,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 @Path("/api")
 public class API {
+
     private static final Logger logger = Logger.getLogger(API.class.getName());
 
     @EJB(beanInterface = ClientContainer.class)
@@ -53,7 +61,7 @@ public class API {
     @GET
     @Path("/dataflows/{name}")
     @Produces("application/json")
-    public String getProcessorFlowDeployment(@PathParam("name") String name) {
+    public String getProcessorFlow(@PathParam("name") String name) {
         ConfigMap map = container.getOSClient().configMaps().withName(name).get();
         if (map != null) {
             return map.getData().get("flow");
@@ -61,6 +69,7 @@ public class API {
             return "";
         }
     }
+    
 
     @GET
     @Path("/dataflows")
@@ -96,7 +105,6 @@ public class API {
                 logger.log(Level.WARNING, "Error reading template from config map: " + e.getMessage());
             }
         }
-
         return results;
     }
 
@@ -166,6 +174,121 @@ public class API {
     }
 
     @GET
+    @Path("flows/{name}/deployment")
+    @Produces("application/json")
+    public String getDeploymentMap(@PathParam("name") String flowName) {
+        String flowJson = getProcessorFlow(flowName + ".cm");
+        if(flowJson!=null && !flowJson.isEmpty()){
+            try {
+                ConfigMap cm = container.getOSClient().configMaps().withName(flowName + "-deployment-map.cm").get();
+                if (cm == null) {
+                    // Need to create an empty one
+                    ProcessorFlow flow = new ProcessorFlowReader().readFromJsonString(flowJson);
+                    ProcessorDeploymentMapBuilder builder = new ProcessorDeploymentMapBuilder(flow);
+                    cm = storeDeploymentMap(flowName, builder.build());
+                } 
+
+                return cm.getData().get("deployment");
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "Error getting deployment map: " + e.getMessage(), e);
+                return "";
+            }
+        } else {
+            logger.log(Level.SEVERE, "No flow: " + flowName);
+            return "";
+        }
+    }
+    
+    @GET
+    @Path("/flows/{name}/defaultdeploymentmap")
+    public String createDefaultDeploymentMap(@PathParam("name")String flowName){
+        String flowJson = getProcessorFlow(flowName + ".cm");
+        if(flowJson!=null && !flowJson.isEmpty()){
+            try {
+                ProcessorFlow flow = new ProcessorFlowReader().readFromJsonString(flowJson);
+                
+                ProcessorDeploymentMapBuilder builder = new ProcessorDeploymentMapBuilder(flow);
+                Iterator<DeploymentHost> hosts = container.listDeploymentHosts().iterator();
+                boolean firstHost = true;
+                while(hosts.hasNext()){
+                    DeploymentHost host = hosts.next();
+                    builder.addDeploymentHost(host.getId());
+                    if(firstHost){
+                        builder.setDefaultDeploymentHost(host.getId());
+                        firstHost = false;
+                    }
+                }
+                
+                builder.deployAllToDefaultHost();
+                ProcessorDeploymentMap map = builder.build();
+                storeDeploymentMap(flowName, map);
+                
+                
+                return "";
+            } catch (Exception e){
+                logger.log(Level.SEVERE, "Error creating default deployment map: " + e.getMessage(), e);
+                return "";
+            }
+        } else {
+            logger.log(Level.SEVERE, "No flow found: " + flowName);
+            return "";
+        }  
+    }
+    
+
+    private ConfigMap storeDeploymentMap(String flowName, ProcessorDeploymentMap map) throws Exception {
+        ProcessorDeploymentMapWriter writer = new ProcessorDeploymentMapWriter(map);
+
+        ConfigMap cm = new ConfigMapBuilder()
+                .withNewMetadata()
+                .withName(flowName + "-deployment-map.cm")
+                .withNamespace(container.getNamespace())
+                .addToLabels("streamzi.io/kind", "deploymentmap")
+                .addToLabels("app", flowName)
+                .endMetadata()
+                .addToData("deployment", writer.writeToIndentedJsonString())
+                .build();
+        return container.getOSClient().configMaps().createOrReplace(cm);
+    }
+
+    @GET
+    @Path("/flows/{name}/repartition")
+    @Produces("application/json")
+    public String repartitionFlow(@PathParam("name")String flowName) {
+        // Get the flow
+        
+        // Get the deployment map
+        
+        // Drop the existing partitions
+        
+        // Build the partitions
+        
+        
+        return "";
+    }
+    
+    @POST
+    @Path("/flows/{name}/deployment")
+    @Consumes("application/json")
+    public void postDeploymentMap(@PathParam("name") String flowName, String deploymentMapJson) {
+        logger.info(deploymentMapJson);
+        try {
+            // Parse this to see if it's ok
+            ProcessorDeploymentMapReader reader = new ProcessorDeploymentMapReader();
+            ProcessorDeploymentMap deploymentMap = reader.read(deploymentMapJson);
+            logger.info("Map Parsed OK");
+
+            // Create a config map with this in
+            storeDeploymentMap(flowName, deploymentMap);
+            
+            // Re-oartition
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error parsing deployment map: " + e.getMessage(), e);
+        }
+
+    }
+
+    @GET
     @Path("/globalproperties")
     @Produces("application/json")
     public String getGlobalProperties() {
@@ -180,9 +303,9 @@ public class API {
 
         String brokerUrl = EnvironmentResolver.get("broker.url");
         if (brokerUrl != null && !brokerUrl.equals("")) {
-            props.put("broker.url", brokerUrl);
+            props.put(ProcessorConstants.INTERCONNECT_BROKER, brokerUrl);
         } else {
-            props.put("broker.url", brokerUrlDefault);
+            props.put(ProcessorConstants.INTERCONNECT_BROKER, brokerUrlDefault);
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -213,5 +336,20 @@ public class API {
             }
         }
         return results;
+
+    }
+    
+    @Path("/deploymenttargets")
+    @Produces("application/json")
+    public String[] listDeploymentTargets(){
+        return null;
+    }
+
+    @POST
+    @Path("deploymenttargets")
+    @Consumes("application/json")
+    public void addDeploymentTarget(String target){
+        // Add the target to the deployments map 
+
     }
 }
