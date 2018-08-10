@@ -60,8 +60,8 @@ public class SerializedNode {
         node.setSettings(settings);
         node.setTemplateId(templateId);
         node.setTemplateName(templateName);
-
         node.setTransport(transport);
+
         for(SerializedPort input : inputs){
             node.addInput(new ProcessorInputPort(input.getName(), input.getTransportType()));
         }
