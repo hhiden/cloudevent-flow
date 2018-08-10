@@ -8,7 +8,7 @@ import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.streamzi.openshift.dataflow.model.ProcessorFlow;
-import io.streamzi.openshift.dataflow.model.ProcessorNodeTemplate;
+import io.streamzi.openshift.dataflow.model.template.ProcessorNodeTemplate;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorFlowReader;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorFlowWriter;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorTemplateYAMLReader;

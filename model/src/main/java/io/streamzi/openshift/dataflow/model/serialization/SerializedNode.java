@@ -20,9 +20,11 @@ public class SerializedNode {
     private String uuid;
     private String templateName;
     private String templateId;
+
     private String transport;
-    private List<String> inputs = new ArrayList<>();
-    private List<String> outputs = new ArrayList<>();
+    private List<SerializedPort> inputs = new ArrayList<>();
+    private List<SerializedPort> outputs = new ArrayList<>();
+
     private String imageName;
     private Map<String, String> settings = new HashMap<>();
     
@@ -42,11 +44,11 @@ public class SerializedNode {
         }
         
         for(ProcessorOutputPort output : node.getOutputs().values()){
-            this.outputs.add(output.getName());
+            this.outputs.add(new SerializedPort(output));
         }
         
         for(ProcessorInputPort input : node.getInputs().values()){
-            this.inputs.add(input.getName());
+            this.inputs.add(new SerializedPort(input));
         }
     }
 
@@ -58,12 +60,13 @@ public class SerializedNode {
         node.setSettings(settings);
         node.setTemplateId(templateId);
         node.setTemplateName(templateName);
+
         node.setTransport(transport);
-        for(String input : inputs){
-            node.addInput(new ProcessorInputPort(input));
+        for(SerializedPort input : inputs){
+            node.addInput(new ProcessorInputPort(input.getName(), input.getTransportType()));
         }
-        for(String output : outputs){
-            node.addOutput(new ProcessorOutputPort(output));
+        for(SerializedPort output : outputs){
+            node.addOutput(new ProcessorOutputPort(output.getName(), output.getTransportType()));
         }
         
         return node;
@@ -77,19 +80,19 @@ public class SerializedNode {
         this.uuid = uuid;
     }
     
-    public List<String> getInputs(){
+    public List<SerializedPort> getInputs(){
         return inputs;
     }
 
-    public void setInputs(List<String> inputs) {
+    public void setInputs(List<SerializedPort> inputs) {
         this.inputs = inputs;
     }
 
-    public List<String> getOutputs() {
+    public List<SerializedPort> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<String> outputs) {
+    public void setOutputs(List<SerializedPort> outputs) {
         this.outputs = outputs;
     }
 

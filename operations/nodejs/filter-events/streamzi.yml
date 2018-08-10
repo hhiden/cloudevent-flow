@@ -3,9 +3,11 @@ id: filter-event-data
 name: "Filter Events"
 description: "Applies a simple filter to a stream of events"
 inputs:
-- "input-data"
+- name: "input-data"
+  transportType: "kafka"
 outputs:
-- "output-data"
+- name: "output-data"
+  transportType: "kafka"
 imageName: "cef-ops-node-filter-event-data"
 settings: {
 "threshold": 0.3
