@@ -17,11 +17,8 @@ import java.util.Map;
 public class ProcessorDeploymentMap {
 
     private Map<String, ProcessorDeploymentGroup> processorGroups = new HashMap<>();
-    private List<String> hosts = new ArrayList<>();
+    private List<String> hosts = new ArrayList<>();    
     
-    public Collection<ProcessorDeploymentGroup> getDeployments() {
-        return processorGroups.values();
-    }
 
     public void setDeployments(Collection<ProcessorDeploymentGroup> processorGroups) {
         for(ProcessorDeploymentGroup g : processorGroups){
@@ -48,6 +45,13 @@ public class ProcessorDeploymentMap {
         this.hosts = hosts;
     }
     
+
+    
+    public Collection<ProcessorDeploymentGroup> getDeployments() {
+        return processorGroups.values();
+    }
+
+
     public void removeDeploymentsForProcessor(String processorUuid){
         processorGroups.remove(processorUuid);
     }
@@ -63,8 +67,4 @@ public class ProcessorDeploymentMap {
     public Iterator<ProcessorDeploymentGroup> groupsIterator(){
         return processorGroups.values().iterator();
     }
-
-
-    
-
 }

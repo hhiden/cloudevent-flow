@@ -17,7 +17,8 @@ public class ProcessorNodeTemplate {
     private String name = "Unnamed Processor";
     private String description = "A processor node";
 
-    private String transport = "kafka";
+
+   
     private List<ProcessorNodeTemplatePort> inputs = new ArrayList<>();
     private List<ProcessorNodeTemplatePort> outputs = new ArrayList<>();
 
@@ -88,15 +89,7 @@ public class ProcessorNodeTemplate {
     public void setSettings(Map<String, String> settings) {
         this.settings = settings;
     }
-
-    public String getTransport() {
-        return transport;
-    }
-
-    public void setTransport(String transport) {
-        this.transport = transport;
-    }
-
+    
     public void addInput(String name, String transportType){
         ProcessorNodeTemplatePort p = new ProcessorNodeTemplatePort();
         p.setName(name);

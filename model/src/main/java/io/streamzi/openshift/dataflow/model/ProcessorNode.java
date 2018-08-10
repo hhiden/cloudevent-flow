@@ -53,6 +53,7 @@ public class ProcessorNode extends ProcessorObject {
 
     private String transport;
 
+    
     public ProcessorNode() {
     }
 

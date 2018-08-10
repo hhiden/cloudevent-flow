@@ -21,9 +21,13 @@ public class SerializedNode {
     private String templateName;
     private String templateId;
 
+
     private String transport;
     private List<SerializedPort> inputs = new ArrayList<>();
     private List<SerializedPort> outputs = new ArrayList<>();
+
+
+   
 
     private String imageName;
     private Map<String, String> settings = new HashMap<>();
@@ -60,8 +64,6 @@ public class SerializedNode {
         node.setSettings(settings);
         node.setTemplateId(templateId);
         node.setTemplateName(templateName);
-
-        node.setTransport(transport);
         for(SerializedPort input : inputs){
             node.addInput(new ProcessorInputPort(input.getName(), input.getTransportType()));
         }
@@ -128,11 +130,4 @@ public class SerializedNode {
         this.templateName = templateName;
     }
 
-    public String getTransport() {
-        return transport;
-    }
-
-    public void setTransport(String transport) {
-        this.transport = transport;
-    }
 }
