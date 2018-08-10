@@ -1,6 +1,8 @@
 package io.streamzi.openshift.dataflow.model.deployment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +14,34 @@ import java.util.Map;
 public class ProcessorDeploymentGroup {
     private String processorUuid;
     private Map<String, ProcessorDeployment> deployments = new HashMap<>();
+
+    public ProcessorDeploymentGroup() {
+    }
     
     public ProcessorDeploymentGroup(String processorUuid) {
         this.processorUuid = processorUuid;
     }
+
+    public Collection<ProcessorDeployment> getLocations() {
+        return deployments.values();
+    }
+
+    public void setLocations(Collection<ProcessorDeployment> deployments) {
+        for(ProcessorDeployment d : deployments){
+            this.deployments.put(d.getHostId(), d);
+        }
+    }
+
+    public void setProcessorUuid(String processorUuid) {
+        this.processorUuid = processorUuid;
+    }
+    
+    public void clearDeployments(){
+        deployments.clear();
+    }
     
     public void addDeployment(String hostId, int replicas){
-        if(deployments.containsKey(hostId)){
+        if(!deployments.containsKey(hostId)){
             // Create a new deployment
             deployments.put(hostId, new ProcessorDeployment(hostId, replicas));
         } else {
@@ -27,6 +50,25 @@ public class ProcessorDeploymentGroup {
                 // None left, remove
                 deployments.remove(hostId);
             }
+        }
+    }
+    
+    public String getProcessorUuid(){
+        return processorUuid;
+    }
+    
+    @JsonIgnore
+    public boolean isConfigured(){
+        if(deployments.size()==0){
+            return false;
+        } else {
+            // Not congigured if any deployments are not setup
+            for(ProcessorDeployment d : deployments.values()){
+                if(!d.isConfigured()){
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

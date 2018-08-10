@@ -7,11 +7,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author hhiden
  */
 public class ProcessorLink extends ProcessorObject {
-
+    private String transportType = "kafka";
     private ProcessorOutputPort source;
-    
     private ProcessorInputPort target;
 
+    public String getTransportType() {
+        return transportType;
+    }
+
+    public void setTransportType(String transportType) {
+        this.transportType = transportType;
+    }
+    
     public void setSource(ProcessorOutputPort source) {
         this.source = source;
     }

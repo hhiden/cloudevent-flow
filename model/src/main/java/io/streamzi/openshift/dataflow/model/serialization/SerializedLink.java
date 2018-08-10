@@ -11,6 +11,7 @@ public class SerializedLink {
     @JsonIgnore
     private ProcessorLink link;
     
+    private String transportType;
     private String sourceUuid;
     private String targetUuid;
     private String sourcePortName;
@@ -25,6 +26,7 @@ public class SerializedLink {
     
     public void setLink(ProcessorLink link) {
         this.link = link;
+        this.transportType = link.getTransportType();
         this.sourcePortName = link.getSource().getName();
         this.sourceUuid = link.getSource().getParent().getUuid();
         this.targetPortName = link.getTarget().getName();
@@ -33,6 +35,14 @@ public class SerializedLink {
 
     public String getSourcePortName() {
         return sourcePortName;
+    }
+
+    public String getTransportType() {
+        return transportType;
+    }
+
+    public void setTransportType(String transportType) {
+        this.transportType = transportType;
     }
 
     public void setSourcePortName(String sourcePortName) {

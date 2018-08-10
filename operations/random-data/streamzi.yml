@@ -4,6 +4,7 @@ name: "Random Source"
 description: "Generates random data"
 inputs:
 outputs:
-- "output-data"
+- name: "output-data"
+  transportType: "kafka"
 imageName: "cef-ops-random-data"
 settings: {}

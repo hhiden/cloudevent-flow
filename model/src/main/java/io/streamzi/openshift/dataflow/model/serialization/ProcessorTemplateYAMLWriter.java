@@ -2,8 +2,7 @@ package io.streamzi.openshift.dataflow.model.serialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import io.streamzi.openshift.dataflow.model.ProcessorNode;
-import io.streamzi.openshift.dataflow.model.ProcessorNodeTemplate;
+import io.streamzi.openshift.dataflow.model.template.ProcessorNodeTemplate;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.logging.Logger;
