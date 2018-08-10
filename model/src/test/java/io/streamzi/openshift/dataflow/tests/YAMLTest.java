@@ -7,7 +7,7 @@ package io.streamzi.openshift.dataflow.tests;
 
 import io.streamzi.openshift.dataflow.model.ProcessorInputPort;
 import io.streamzi.openshift.dataflow.model.ProcessorNode;
-import io.streamzi.openshift.dataflow.model.ProcessorNodeTemplate;
+import io.streamzi.openshift.dataflow.model.template.ProcessorNodeTemplate;
 import io.streamzi.openshift.dataflow.model.ProcessorOutputPort;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorTemplateYAMLWriter;
 import org.junit.After;

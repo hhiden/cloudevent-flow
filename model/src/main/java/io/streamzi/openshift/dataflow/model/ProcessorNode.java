@@ -12,32 +12,55 @@ import java.util.Map;
  */
 public class ProcessorNode extends ProcessorObject {
     /** Input Ports */
-    private Map<String, ProcessorInputPort> inputs = new HashMap<>();
+    protected Map<String, ProcessorInputPort> inputs = new HashMap<>();
     
     /** Output Ports */
-    private Map<String, ProcessorOutputPort> outputs = new HashMap<>();
+    protected Map<String, ProcessorOutputPort> outputs = new HashMap<>();
     
     /** Image name */
-    private String imageName = "oc-stream-container";
+    protected String imageName = "oc-stream-container";
     
     /** Unique ID of the node */
-    private String uuid;
+    protected String uuid;
 
     /** Name of the node taken from the template */
-    private String templateName;
+    protected String templateName;
     
     /** ID of the node template */
-    private String templateId;
+    protected String templateId;
     
     /** Runtime settings */
-    private Map<String, String> settings = new HashMap<>();
+    protected Map<String, String> settings = new HashMap<>();
     
     /** Parent flow */
-    private ProcessorFlow parent;
+    protected ProcessorFlow parent;
     
     public ProcessorNode() {
     }
 
+    public ProcessorNode getCopy(){
+        ProcessorNode copy = new ProcessorNode();
+        copy.setImageName(imageName);
+        copy.setTemplateId(templateId);
+        copy.setTemplateName(templateName);
+        copy.setUuid(uuid);
+        
+        
+        for(String key : settings.keySet()){
+            copy.settings.put(key, settings.get(key));
+        }
+        
+        for(ProcessorOutputPort port : outputs.values()){
+            copy.addOutput(new ProcessorOutputPort(port.getName(), port.getTransportType()));
+        }
+        
+        for(ProcessorInputPort port : inputs.values()){
+            copy.addInput(new ProcessorInputPort(port.getName(), port.getTransportType()));
+        }
+
+        return copy;
+    }
+    
     public ProcessorFlow getParent() {
         return parent;
     }

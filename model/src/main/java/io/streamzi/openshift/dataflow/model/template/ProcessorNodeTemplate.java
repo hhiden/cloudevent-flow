@@ -1,5 +1,8 @@
-package io.streamzi.openshift.dataflow.model;
+package io.streamzi.openshift.dataflow.model.template;
 
+import io.streamzi.openshift.dataflow.model.ProcessorInputPort;
+import io.streamzi.openshift.dataflow.model.ProcessorNode;
+import io.streamzi.openshift.dataflow.model.ProcessorOutputPort;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +16,8 @@ public class ProcessorNodeTemplate {
     private String id = "processor";
     private String name = "Unnamed Processor";
     private String description = "A processor node";
-    private List<String> inputs = new ArrayList<>();
-    private List<String> outputs = new ArrayList<>();
+    private List<ProcessorNodeTemplatePort> inputs = new ArrayList<>();
+    private List<ProcessorNodeTemplatePort> outputs = new ArrayList<>();
     private String mainClassName = "io.streamzi.openshift.container.ProcessorRunner";
     private String imageName = "oc-stream-container";
     private Map<String, String> settings = new HashMap<>();
@@ -51,11 +54,11 @@ public class ProcessorNodeTemplate {
         this.id = id;
     }
     
-    public List<String> getInputs() {
+    public List<ProcessorNodeTemplatePort> getInputs() {
         return inputs;
     }
 
-    public void setInputs(List<String> inputs) {
+    public void setInputs(List<ProcessorNodeTemplatePort> inputs) {
         this.inputs = inputs;
     }
 
@@ -67,11 +70,11 @@ public class ProcessorNodeTemplate {
         this.mainClassName = mainClassName;
     }
 
-    public List<String> getOutputs() {
+    public List<ProcessorNodeTemplatePort> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<String> outputs) {
+    public void setOutputs(List<ProcessorNodeTemplatePort> outputs) {
         this.outputs = outputs;
     }
 
@@ -83,13 +86,30 @@ public class ProcessorNodeTemplate {
         this.settings = settings;
     }
 
-
+    public void addInput(String name, String transportType){
+        ProcessorNodeTemplatePort p = new ProcessorNodeTemplatePort();
+        p.setName(name);
+        p.setTransportType(transportType);
+        this.inputs.add(p);
+    }
+    
     public void addInput(String name) {
-        this.inputs.add(name);
+        ProcessorNodeTemplatePort p = new ProcessorNodeTemplatePort();
+        p.setName(name);
+        this.inputs.add(p);
     }
 
+    public void addOutput(String name, String transportType){
+        ProcessorNodeTemplatePort p = new ProcessorNodeTemplatePort();
+        p.setName(name);
+        p.setTransportType(transportType);        
+        this.outputs.add(p);
+    }
+    
     public void addOutput(String name){
-        this.outputs.add(name);
+        ProcessorNodeTemplatePort p = new ProcessorNodeTemplatePort();
+        p.setName(name);        
+        this.outputs.add(p);
     }
     
     public ProcessorNode createProcessorNode(){
@@ -98,16 +118,17 @@ public class ProcessorNodeTemplate {
         node.setImageName(imageName);
         node.setSettings(settings);
         if(inputs!=null){
-            for(String input : inputs){
-                node.addInput(new ProcessorInputPort(input));
+            for(ProcessorNodeTemplatePort input : inputs){
+                node.addInput(new ProcessorInputPort(input.getName(), input.getTransportType()));
             }
         }
         
         if(outputs!=null){
-            for(String output : outputs){
-                node.addOutput(new ProcessorOutputPort(output));
+            for(ProcessorNodeTemplatePort output : outputs){
+                node.addOutput(new ProcessorOutputPort(output.getName(), output.getTransportType()));
             }
         }
         return node;
     }
+
 }

@@ -3,7 +3,8 @@ id: log-data
 name: "Log Data"
 description: "Prints data to console"
 inputs:
-- "input-data"
+- name: "input-data"
+  transportType: "kafka"
 outputs:
 imageName: "cef-ops-log-data"
 settings: {}

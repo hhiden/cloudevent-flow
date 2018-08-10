@@ -17,6 +17,8 @@ public class ProcessorFlow implements Serializable {
     private String name;
     private Map<String, String> settings = new HashMap<>();
     private Map<String, String> globalSettings = new HashMap<>();
+    private Map<String, String> deployments = new HashMap<>();
+    
 
     public String getName() {
         return name;
@@ -26,6 +28,29 @@ public class ProcessorFlow implements Serializable {
         this.name = name;
     }
 
+    public void copySettingsFromFlow(ProcessorFlow flow){
+        for(String key : flow.getSettings().keySet()){
+            settings.put(key, flow.getSettings().get(key));
+        }
+        
+        for(String key : flow.getGlobalSettings().keySet()){
+            globalSettings.put(key, flow.getGlobalSettings().get(key));
+        }
+    }
+    
+    public ProcessorFlow getCopy(){
+        ProcessorFlow copy = new ProcessorFlow();
+        copy.copySettingsFromFlow(this);
+        for(ProcessorNode n : getNodes()){
+            copy.addProcessorNode(n.getCopy());
+        }
+        
+        for(ProcessorLink l : getLinks()){
+            copy.linkNodes(l);
+        }
+        return copy;
+    }
+    
     public Map<String, String> getGlobalSettings() {
         return globalSettings;
     }
@@ -58,17 +83,34 @@ public class ProcessorFlow implements Serializable {
         nodes.add(node);
     }
     
+    public void linkNodes(ProcessorLink link){
+        linkNodes(
+                link.getSource().getParent().getUuid(),
+                link.getSource().getName(),
+                link.getTarget().getParent().getUuid(),
+                link.getTarget().getName());
+    }
+    
     public void linkNodes(String sourceUuid, String sourcePortName, String targetUuid, String targetPortName){
         linkNodes(getNodeByUuid(sourceUuid), sourcePortName, getNodeByUuid(targetUuid), targetPortName);
+    }
+    
+    public boolean canAddLink(ProcessorLink link){
+        if(containesNode(link.getSource().getParent().getUuid()) && containesNode(link.getTarget().getParent().getUuid())){
+            return link.getSource().getTransportType().equals(link.getTarget().getTransportType());
+        } else {
+            return false;
+        }        
     }
     
     public void linkNodes(ProcessorNode source, String sourcePortName, ProcessorNode target, String targetPortName){
         ProcessorOutputPort sourcePort = source.getOutput(sourcePortName);
         ProcessorInputPort targetPort = target.getInput(targetPortName);
-        if(sourcePort!=null && targetPort!=null){
+        if(sourcePort!=null && targetPort!=null && sourcePort.getTransportType().equals(targetPort.getTransportType())){
             ProcessorLink link = new ProcessorLink();
             link.setSource(sourcePort);
             link.setTarget(targetPort);
+            link.setTransportType(sourcePort.getTransportType());
             sourcePort.addLink(link);
             targetPort.addLink(link);
         }
@@ -95,5 +137,17 @@ public class ProcessorFlow implements Serializable {
             }
         }
         return null;
+    }
+    
+    public boolean containesNode(String uuid){
+        return getNodeByUuid(uuid)!=null;
+    }
+
+    public Map<String, String> getDeployments() {
+        return deployments;
+    }
+
+    public void setDeployments(Map<String, String> deployments) {
+        this.deployments = deployments;
     }
 }
