@@ -3,10 +3,9 @@ id: amqp-receiver
 name: "AMQP Receiver"
 description: "Logs AMQP messages"
 inputs:
-- "input-data"
+- name: "input-data"
   transportType: "amqp"
 outputs:
 imageName: "cef-ops-receiver"
-transport: "amqp"
 settings: {
 }

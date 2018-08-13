@@ -12,7 +12,5 @@ public class ProcessorDeploymentMapReader {
     public ProcessorDeploymentMap read(String json) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, ProcessorDeploymentMap.class);
-        
-        
     }
 }

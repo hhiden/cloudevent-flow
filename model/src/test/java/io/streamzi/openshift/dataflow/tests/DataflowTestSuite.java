@@ -16,7 +16,8 @@ import org.junit.runners.Suite;
     ModelTest.class,
     YAMLTest.class,
     FunctioningFlowTest.class,
-    DeploymentBuilderTest.class
+    DeploymentBuilderTest.class,
+    DeploymentHostTests.class
 })
 public class DataflowTestSuite {
 

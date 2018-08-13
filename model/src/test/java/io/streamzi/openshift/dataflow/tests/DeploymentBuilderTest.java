@@ -7,7 +7,7 @@ import io.streamzi.openshift.dataflow.model.ProcessorNode;
 import io.streamzi.openshift.dataflow.model.ProcessorOutputPort;
 import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeploymentMap;
 import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeploymentMapBuilder;
-import io.streamzi.openshift.dataflow.model.serialization.ProcessorDeploymentGroupWriter;
+import io.streamzi.openshift.dataflow.model.serialization.ProcessorDeploymentMapWriter;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorDeploymentMapReader;
 import io.streamzi.openshift.dataflow.model.serialization.ProcessorFlowWriter;
 import io.streamzi.openshift.dataflow.partitioning.ProcessorFlowPartitioner;
@@ -66,6 +66,10 @@ public class DeploymentBuilderTest {
         flow.linkNodes(kafkaInput, "events", kafkaFilter, "input");
         flow.linkNodes(kafkaFilter, "output", kafkaPublish, "events");
         
+        // Build a no-deployment map
+        ProcessorDeploymentMap noDeploymentMap = new ProcessorDeploymentMapBuilder(flow).build();
+        logger.info(new ProcessorDeploymentMapWriter(noDeploymentMap).writeToIndentedJsonString());
+        
         // Build a default map
         ProcessorDeploymentMap map = new ProcessorDeploymentMapBuilder(flow)
                 .addDeploymentHost("openshift")
@@ -77,13 +81,13 @@ public class DeploymentBuilderTest {
                 .build();
         
         // Print
-        ProcessorDeploymentGroupWriter writer = new ProcessorDeploymentGroupWriter(map);
+        ProcessorDeploymentMapWriter writer = new ProcessorDeploymentMapWriter(map);
         String json = writer.writeToIndentedJsonString();
         logger.info(json);
         
         ProcessorDeploymentMapReader reader = new ProcessorDeploymentMapReader();
         ProcessorDeploymentMap recreatedMap = reader.read(json);
-        String recreatedJson = new ProcessorDeploymentGroupWriter(recreatedMap).writeToIndentedJsonString();
+        String recreatedJson = new ProcessorDeploymentMapWriter(recreatedMap).writeToIndentedJsonString();
         logger.info(recreatedJson);
         Assert.assertEquals(json, recreatedJson);
         
