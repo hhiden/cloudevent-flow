@@ -93,7 +93,7 @@ public class ProcessorDeploymentMapBuilder {
         return this;
     }
     
-    public ProcessorDeploymentMapBuilder assigneDefaultDeploymentForUndeployedProcessors() throws ProcessorDeploymentException {
+    public ProcessorDeploymentMapBuilder assignDefaultDeploymentForUndeployedProcessors() throws ProcessorDeploymentException {
         if(defaultHostId!=null){
             for(ProcessorDeploymentGroup g : deploymentSet.values()){
                 if(!g.isConfigured()){
@@ -116,7 +116,8 @@ public class ProcessorDeploymentMapBuilder {
             map.setHosts(hostIds);
             return map;
         } else {
-            throw new ProcessorDeploymentException("Not all processors have been assigned to a host");
+            return new ProcessorDeploymentMap();
+            //throw new ProcessorDeploymentException("Not all processors have been assigned to a host");
         }
     }
     

@@ -13,8 +13,8 @@
     <modules>
         <module>random-data</module>
         <module>log-data</module>
-        <module>jms/sender</module>
-        <module>jms/receiver</module>
+        <module>amqp/sender</module>
+        <module>amqp/receiver</module>
     </modules>
 
     <properties>

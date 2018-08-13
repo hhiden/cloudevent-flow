@@ -8,10 +8,10 @@ import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeploymentMap;
  * Writes a deployment group to JSON
  * @author hhiden
  */
-public class ProcessorDeploymentGroupWriter {
+public class ProcessorDeploymentMapWriter {
     private ProcessorDeploymentMap map;
 
-    public ProcessorDeploymentGroupWriter(ProcessorDeploymentMap map) {
+    public ProcessorDeploymentMapWriter(ProcessorDeploymentMap map) {
         this.map = map;
     }
     

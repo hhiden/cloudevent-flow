@@ -16,7 +16,8 @@ public class Executor {
     private static Logger logger;
 
     private static final String FLOW_PREDICATE = "streamzi.io/kind=flow";
-
+    private static final String DEPLOYMENT_PREDICATE = "streamzi.io/kind=deploymentmap";
+    
     public Executor() {
     }
 
@@ -36,11 +37,13 @@ public class Executor {
     public static void main(String[] args) {
 
         logger.info("\uD83C\uDF0A Starting Flow Controller \uD83C\uDF0A");
-
-        final FlowWatcher fw = new FlowWatcher(new FlowController(), FLOW_PREDICATE);
-
-        final ExecutorService executor = Executors.newFixedThreadPool(1);
-        executor.submit(fw);
+        final ExecutorService executor = Executors.newFixedThreadPool(1);   
+        
+        //final FlowWatcher fw = new FlowWatcher(new FlowController(), FLOW_PREDICATE);
+        //executor.submit(fw);
+        
+        final DeploymentWatcher dw = new DeploymentWatcher(new DeploymentController(), DEPLOYMENT_PREDICATE);
+        executor.submit(dw);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Shutting down");
@@ -51,8 +54,5 @@ public class Executor {
                 logger.severe("Error on close: " + ie.getMessage());
             }
         }));
-
-
     }
-
 }
