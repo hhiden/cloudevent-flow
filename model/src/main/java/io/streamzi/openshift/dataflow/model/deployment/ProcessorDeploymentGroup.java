@@ -1,6 +1,7 @@
 package io.streamzi.openshift.dataflow.model.deployment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Collection;
 
 
@@ -9,6 +10,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import java.util.HashMap;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import java.util.Map;
 
 /**
@@ -21,7 +28,6 @@ public class ProcessorDeploymentGroup {
 
     public ProcessorDeploymentGroup() {
     }
-
 
     public ProcessorDeploymentGroup(String processorUuid) {
         this.processorUuid = processorUuid;

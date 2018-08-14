@@ -1,13 +1,11 @@
 package io.streamzi.openshift.dataflow.model.deployment;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * This class holds a map describing where the ProcessorNodes for a ProcessorFlow
@@ -16,9 +14,14 @@ import java.util.Map;
  */
 public class ProcessorDeploymentMap {
 
+
     private Map<String, ProcessorDeploymentGroup> processorGroups = new HashMap<>();
     private List<String> hosts = new ArrayList<>();    
     
+    
+    public Collection<ProcessorDeploymentGroup> getDeployments() {
+        return processorGroups.values();
+    }
 
     public void setDeployments(Collection<ProcessorDeploymentGroup> processorGroups) {
         for(ProcessorDeploymentGroup g : processorGroups){
@@ -45,12 +48,7 @@ public class ProcessorDeploymentMap {
         this.hosts = hosts;
     }
     
-
     
-    public Collection<ProcessorDeploymentGroup> getDeployments() {
-        return processorGroups.values();
-    }
-
 
     public void removeDeploymentsForProcessor(String processorUuid){
         processorGroups.remove(processorUuid);

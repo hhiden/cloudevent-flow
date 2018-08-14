@@ -2,7 +2,6 @@ package io.streamzi.openshift.dataflow.partitioning;
 
 import io.streamzi.openshift.dataflow.model.ProcessorFlow;
 
-import io.streamzi.openshift.dataflow.model.ProcessorLink;
 import io.streamzi.openshift.dataflow.model.ProcessorNode;
 import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeployment;
 import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeploymentGroup;
@@ -12,12 +11,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * Breaks up a processor flow into partitions based on runtime location requirements
