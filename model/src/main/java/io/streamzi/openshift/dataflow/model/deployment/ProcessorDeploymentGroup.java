@@ -19,6 +19,9 @@ public class ProcessorDeploymentGroup {
     private String processorUuid;
     private Map<String, ProcessorDeployment> deployments = new HashMap<>();
 
+    public ProcessorDeploymentGroup() {
+    }
+
 
     public ProcessorDeploymentGroup(String processorUuid) {
         this.processorUuid = processorUuid;
