@@ -2,11 +2,13 @@ package io.streamzi.openshift.dataflow.partitioning;
 
 import io.streamzi.openshift.dataflow.model.ProcessorFlow;
 import io.streamzi.openshift.dataflow.model.ProcessorLink;
+
 import io.streamzi.openshift.dataflow.model.ProcessorNode;
 import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeployment;
 import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeploymentGroup;
 import io.streamzi.openshift.dataflow.model.deployment.ProcessorDeploymentMap;
 import java.util.Collection;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +62,7 @@ public class ProcessorFlowPartitioner {
         // Create virtual input and output nodes for any links that have been broken
         return results.values();
     }
+
 
 }
 

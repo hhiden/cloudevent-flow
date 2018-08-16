@@ -96,7 +96,8 @@ public class ProcessorNodeTemplate {
         p.setTransportType(transportType);
         this.inputs.add(p);
     }
-
+    
+    
     public void addInput(String name) {
         ProcessorNodeTemplatePort p = new ProcessorNodeTemplatePort();
         p.setName(name);
