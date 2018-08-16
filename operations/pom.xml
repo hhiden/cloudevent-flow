@@ -13,11 +13,6 @@
     <modules>
         <module>random-data</module>
         <module>log-data</module>
-<<<<<<< HEAD
-=======
-        <module>amqp/sender</module>
-        <module>amqp/receiver</module>
->>>>>>> a1acde5eef2e870b6d6ce9be471baa41f85baeba
     </modules>
 
     <properties>
