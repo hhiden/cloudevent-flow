@@ -235,7 +235,10 @@ public class API {
         }  
     }
     
-
+    private void doRepartition(ProcessorFlow flow, ProcessorDeploymentMap map) throws Exception {
+        
+    }
+    
     private ConfigMap storeDeploymentMap(String flowName, ProcessorDeploymentMap map) throws Exception {
         ProcessorDeploymentMapWriter writer = new ProcessorDeploymentMapWriter(map);
 
