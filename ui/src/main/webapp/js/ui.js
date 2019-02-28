@@ -3,7 +3,6 @@ blocks.scale = 1.4;
 var templateMap = {};
 var renameMap = {};
 var defaults = {};
-var clouds = new Array();
 
 // Add a method to get a block by uuid
 blocks.connectorCounter = 0;
@@ -79,34 +78,6 @@ blocks.addBlock = function (name, x, y, nodeData) {
                     }
                 }
 
-                // Add the replicas to the replicas field
-                if (nodeData.targetClouds) {
-                    var fieldName;
-
-                    var keys = Object.keys(nodeData.targetClouds);
-                    for (var i = 0; i < keys.length; i++) {
-                        fieldName = "replicas_" + keys[i];
-                        var fields = block.fields.fields;
-                        for (var j = 0; j < fields.length; j++) {
-                            if (fieldName === fields[j].name) {
-                                fields[j].value = nodeData.targetClouds[keys[i]];
-                            }
-                        }
-                    }
-                }
-
-                if (nodeData.outputCloud) {
-
-                    keys = Object.keys(nodeData.targetClouds);
-                    for (i = 0; i < keys.length; i++) {
-                        fields = block.fields.fields;
-                        for (var j = 0; j < fields.length; j++) {
-                            if ("outputCloud" === fields[j].name) {
-                                fields[j].value = nodeData.outputCloud;
-                            }
-                        }
-                    }
-                }
             }
 
             block.create(this.div.find('.blocks'));
@@ -131,38 +102,27 @@ blocks.addBlock = function (name, x, y, nodeData) {
     }
 
     Promise.all([
-
-        fetchTopicList(function (data) {
-            setupTopicBlocksJs(data);
-        }),
-
-        fetchClouds(function (data) {
-            for (var i = 0; i < data.length; i++) {
-                clouds.push(data[i]);
-            }
-        }),
-
         fetchNodeYaml(function (data) {
             setupBlocksJs(data);
             blocks.run('#blocks');
         })
     ])
-        .then(function (p) {
+            .then(function (p) {
 
-            blocks.ready(function () {
-                blocks.menu.addAction('Export', function (blocks) {
-                    //alert($.toJSON(blocks.export()));
-                    exportJson();
-                }, 'export');
+                blocks.ready(function () {
+                    blocks.menu.addAction('Export', function (blocks) {
+                        //alert($.toJSON(blocks.export()));
+                        exportJson();
+                    }, 'export');
 
-                if (_flowName) {
-                    console.log("About to fetch Flow");
-                    fetchFlowJson(_flowName, function (result) {
-                        importJson(result);
-                    })
-                }
-            })
-        });
+                    if (_flowName) {
+                        console.log("About to fetch Flow");
+                        fetchFlowJson(_flowName, function (result) {
+                            importJson(result);
+                        })
+                    }
+                })
+            });
 
 
     blocks.types.addCompatibility('string', 'number');
@@ -172,7 +132,7 @@ blocks.addBlock = function (name, x, y, nodeData) {
     blocks.types.addCompatibility('bool', 'string');
 
 })
-();
+        ();
 
 
 function fetchFlowJson(flowName, callback) {
@@ -186,10 +146,7 @@ function fetchFlowJson(flowName, callback) {
     });
 }
 
-function importJson(customResource) {
-
-    var drawingData = customResource.spec;
-
+function importJson(drawingData) {
     // Create the blocks
     var nodeData;
     var block;
@@ -228,6 +185,7 @@ function exportJson(flowName) {
     var outputsArray;
     var replicas;
     var settings;
+    var attributes;
     var block;
     var cloudName;
     var serializedBlock;
@@ -240,6 +198,7 @@ function exportJson(flowName) {
             outputsArray = new Array();
             replicas = {};
             settings = {};
+            attributes = {};
 
             if (block._template.inputs) {
                 for (var j = 0; j < block._template.inputs.length; j++) {
@@ -271,39 +230,25 @@ function exportJson(flowName) {
                 }
             }
 
-            // Find the replicas data
-            if (block.fields.fields) {
-                for (var j = 0; j < block.fields.fields.length; j++) {
-                    field = block.fields.fields[j];
-                    if (field.name.startsWith("replicas_")) {
-                        cloudName = field.name.substring(9);
-                        replicas[cloudName] = field.value;
-                    }
-                }
-            }
-
-            if (block.fields.fields) {
-                for (j = 0; j < block.fields.fields.length; j++) {
-                    field = block.fields.fields[j];
-                    if (field.name === "outputcloud") {
-                        outputCloud = field.value;
-                    }
+            // Copy in fixed attributes
+            if(block._template.attributes){
+                var keys = Object.keys(block._template.attributes);
+                for(var j=0;j<keys.length;j++){
+                    attributes[keys[j]] = block._template.attributes[keys[j]];
                 }
             }
 
             processorJson = {
                 displayName: block._template.displayName,
                 imageName: block._template.imageName,
-                templateId: block._template.id,
                 templateName: block._template.name,
                 transport: block._template.transport,
                 processorType: block._template.processorType,
                 uuid: block._uuid,
                 settings: settings,
+                attributes: attributes,
                 inputs: inputsArray,
                 outputs: outputsArray,
-                targetClouds: replicas,
-                outputCloud: outputCloud
             };
 
             processorArray.push(processorJson);
@@ -395,77 +340,6 @@ function exportJson(flowName) {
     return json;
 }
 
-function setupTopicBlocksJs(topicList) {
-    var template;
-    var blockData;
-    var fields;
-    var outputName;
-
-    for (var i = 0; i < topicList.length; i++) {
-        fields = [];
-        blockData = {
-            name: topicList[i].name,
-            description: "Kafka Topic",
-            family: "Topics"
-        };
-
-        // Fix names and add to the rename map so that we can fix later
-        //outputName = replaceall(topicList[i], ".", "-");
-        outputName = sanitize(topicList[i].name);
-        renameMap[outputName] = topicList[i].name;
-
-        fields.push({
-            name: outputName,
-            type: "string",
-            attrs: "input",
-            topicName: topicList[i].name
-
-        });
-
-        fields.push({
-            name: outputName,
-            type: "string",
-            attrs: "output",
-            topicName: topicList[i].name
-
-        });
-
-        fields.push({
-            name: "outputCloud",
-            defaultValue: topicList[i].cloud,
-            type: "string",
-            attrs: "editable"
-        });
-
-        fields.push({
-            name: "deployable",
-            type: "boolean",
-            value: false
-        });
-        blockData.fields = fields;
-
-        // Dummy template
-        templateMap[topicList[i].name] = {
-            displayName: "",
-            imageName: "none",
-            templateId: "none",
-            name: topicList[i].name,
-            transport: "kafka",
-            uuid: "none",
-            processorType: "TOPIC_ENDPOINT",
-            inputs: [
-                topicList[i].name
-            ],
-            outputs: [
-                topicList[i].name
-            ]
-
-        };
-        blocks.register(blockData);
-    }
-    console.log("Loaded topics")
-}
-
 
 function setupBlocksJs(nodeYamlList) {
     var template;
@@ -476,9 +350,9 @@ function setupBlocksJs(nodeYamlList) {
 
     for (var i = 0; i < nodeYamlList.length; i++) {
 
-        template = nodeYamlList[i].spec;
+        template = nodeYamlList[i];
         template.name = template.displayName;
-        template.id = nodeYamlList[i].metadata.name;
+        template.id = nodeYamlList[i].name;
         template.deployable = true;
 
         fields = new Array();
@@ -544,36 +418,6 @@ function setupBlocksJs(nodeYamlList) {
             }
         }
 
-        // ADD DEPLOYMENT DATA
-        var cloudName;
-        for (var j = 0; j < clouds.length; j++) {
-            cloudName = clouds[j];
-            if (cloudName === "local") {
-                // Default is 1-local
-                fields.push({
-                    name: "replicas_" + cloudName,
-                    defaultValue: 1,
-                    type: "integer",
-                    attrs: " editable"
-                });
-            } else {
-                // Nothing for anywhere else
-                fields.push({
-                    name: "replicas_" + cloudName,
-                    defaultValue: 0,
-                    type: "integer",
-                    attrs: " editable"
-                });
-            }
-        }
-
-        fields.push({
-            name: "outputCloud",
-            defaultValue: "",
-            type: "string",
-            attrs: " editable"
-        });
-
         blockData.fields = fields;
         console.log(JSON.stringify(blockData));
         blocks.register(blockData);
@@ -581,16 +425,6 @@ function setupBlocksJs(nodeYamlList) {
     }
 }
 
-function fetchTopicList(callback) {
-    return $.ajax({
-        url: "rest/api/topics",
-        type: 'GET',
-        dataType: "json",
-        contentType: "application/json; charset=utf-8"
-    }).then(function (data) {
-        callback(data);
-    });
-}
 
 function fetchNodeYaml(callback) {
 
@@ -604,23 +438,13 @@ function fetchNodeYaml(callback) {
     });
 }
 
-function fetchClouds(callback) {
-    return $.ajax({
-        url: "rest/api/clouds/names",
-        type: 'GET',
-        dataType: "json",
-        contentType: "application/json; charset=utf-8"
-    }).then(function (data) {
-        callback(data);
-    });
-}
 
 // THIS ISN'T A GUID
 function guid() {
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
+                .toString(16)
+                .substring(1);
     }
 
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();

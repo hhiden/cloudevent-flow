@@ -3,9 +3,9 @@ package io.streamzi.eventflow.serialization;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.fabric8.kubernetes.api.model.KubernetesResource;
-import io.streamzi.eventflow.model.ProcessorInputPort;
-import io.streamzi.eventflow.model.ProcessorNode;
-import io.streamzi.eventflow.model.ProcessorOutputPort;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 
 import java.util.List;
 import java.util.Map;
@@ -21,11 +21,18 @@ public class SerializedTemplate implements KubernetesResource {
 
     private String imageName;
 
-    private List<String> inputs;
+    private String processorType;
+    
+    private List<String> inputs = new ArrayList<>();
 
-    private List<String> outputs;
+    private List<String> outputs = new ArrayList<>();
 
-    private Map<String, String> settings;
+    /** Editable things */
+    private Map<String, String> settings = new HashMap<>();
+    
+    /** Fixed properties */
+    private Map<String, String> attributes = new HashMap<>();
+    
 
     @Override
     public String toString() {
@@ -87,24 +94,21 @@ public class SerializedTemplate implements KubernetesResource {
         this.settings = settings;
     }
 
-    public ProcessorNode createProcessorNode() {
-        ProcessorNode node = new ProcessorNode();
-
-        node.setImageName(imageName);
-        node.setSettings(settings);
-        node.setDisplayName(displayName);
-
-        if (inputs != null) {
-            for (String input : inputs) {
-                node.addInput(new ProcessorInputPort(input));
-            }
-        }
-
-        if (outputs != null) {
-            for (String output : outputs) {
-                node.addOutput(new ProcessorOutputPort(output));
-            }
-        }
-        return node;
+    public Map<String, String> getAttributes() {
+        return attributes;
     }
+
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
+    }
+
+    public String getProcessorType() {
+        return processorType;
+    }
+
+    public void setProcessorType(String processorType) {
+        this.processorType = processorType;
+    }
+    
+    
 }

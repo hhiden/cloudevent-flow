@@ -1,15 +1,10 @@
 package io.streamzi.eventflow.serialization;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.streamzi.eventflow.model.ProcessorConstants;
-import io.streamzi.eventflow.model.ProcessorInputPort;
-import io.streamzi.eventflow.model.ProcessorNode;
-import io.streamzi.eventflow.model.ProcessorOutputPort;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Serialized form of node
@@ -17,82 +12,29 @@ import java.util.Map;
  * @author hhiden
  */
 public class SerializedNode {
-    @JsonIgnore
-    private ProcessorNode node;
-
-    private String uuid;
+    private String uuid = UUID.randomUUID().toString();
     private String displayName;
-    private String templateName;
-    private String templateId;
-    private String transport;
-    private String processorType;
     private List<String> inputs = new ArrayList<>();
     private List<String> outputs = new ArrayList<>();
-    private Map<String, Integer> targetClouds = new HashMap<>();
-    private String outputCloud;
-
-
-    private String imageName;
+    private HashMap<String, String> attributes = new HashMap<>();
     private Map<String, String> settings = new HashMap<>();
-
+    private String templateName;
+    private String imageName;
+    private String processorType;
+    
     public SerializedNode() {
-    }
-
-    public SerializedNode(ProcessorNode node) {
-        this.node = node;
-        displayName = node.getDisplayName();
-        uuid = node.getUuid();
-        templateId = node.getTemplateId();
-        templateName = node.getTemplateName();
-        transport = node.getTransport();
-        processorType = node.getProcessorType().toString();
-        outputCloud = node.getOutputCloud();
-
-        this.imageName = node.getImageName();
-        for (String key : node.getSettings().keySet()) {
-            settings.put(key, node.getSettings().get(key));
-        }
-
-        for (ProcessorOutputPort output : node.getOutputs().values()) {
-            this.outputs.add(output.getName());
-        }
-
-        for (ProcessorInputPort input : node.getInputs().values()) {
-            this.inputs.add(input.getName());
-        }
-
-        for (String id : node.getTargetClouds().keySet()) {
-            this.targetClouds.put(id, node.getTargetClouds().get(id));
-        }
-    }
-
-    public ProcessorNode createNode() {
-        ProcessorNode node = new ProcessorNode();
-
-        node.setUuid(uuid);
-        node.setImageName(imageName);
-        node.setSettings(settings);
-        node.setTemplateId(templateId);
-        node.setTemplateName(templateName);
-        node.setTransport(transport);
-        node.setProcessorType(ProcessorConstants.ProcessorType.valueOf(processorType));
-        node.setDisplayName(displayName);
-        node.setOutputCloud(outputCloud);
-        for (String input : inputs) {
-            node.addInput(new ProcessorInputPort(input));
-        }
-        for (String output : outputs) {
-            node.addOutput(new ProcessorOutputPort(output));
-        }
-        for (String id : targetClouds.keySet()) {
-            node.getTargetClouds().put(id, targetClouds.get(id));
-        }
-
-        return node;
     }
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 
     public void setUuid(String uuid) {
@@ -131,28 +73,20 @@ public class SerializedNode {
         this.settings = settings;
     }
 
-    public String getTemplateId() {
-        return templateId;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setTemplateId(String templateId) {
-        this.templateId = templateId;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public String getTemplateName() {
-        return templateName;
+    public HashMap<String, String> getAttributes() {
+        return attributes;
     }
 
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
-
-    public String getTransport() {
-        return transport;
-    }
-
-    public void setTransport(String transport) {
-        this.transport = transport;
+    public void setAttributes(HashMap<String, String> attributes) {
+        this.attributes = attributes;
     }
 
     public String getProcessorType() {
@@ -163,44 +97,13 @@ public class SerializedNode {
         this.processorType = processorType;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public Map<String, Integer> getTargetClouds() {
-        return targetClouds;
-    }
-
-    public void setTargetClouds(Map<String, Integer> targetClouds) {
-        this.targetClouds = targetClouds;
-    }
-
-    public String getOutputCloud() {
-        return outputCloud;
-    }
-
-    public void setOutputCloud(String outputCloud) {
-        this.outputCloud = outputCloud;
-    }
-
     @Override
     public String toString() {
         return "SerializedNode{" +
-                "node=" + node +
                 ", uuid='" + uuid + '\'' +
                 ", displayName='" + displayName + '\'' +
-                ", templateName='" + templateName + '\'' +
-                ", templateId='" + templateId + '\'' +
-                ", transport='" + transport + '\'' +
-                ", processorType='" + processorType + '\'' +
                 ", inputs=" + inputs +
                 ", outputs=" + outputs +
-                ", targetClouds=" + targetClouds +
-                ", outputCloud='" + outputCloud + '\'' +
                 ", imageName='" + imageName + '\'' +
                 ", settings=" + settings +
                 '}';
