@@ -13,22 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.streamzi.eventflow.providers;
 
-import io.streamzi.eventflow.serialization.SerializedFlow;
 import io.streamzi.eventflow.serialization.SerializedTemplate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
- * This class provides access to flows based on KNative primitives
- * @author hugo
+ * Dummy provider that uses Flow CRDs to store data
  */
-public class DummyKnativeProvider extends FlowCRDBackedProvider {
+public class DummyFlowCRDBackedProvider extends FlowCRDBackedProvider {
 
-    /** This method lists the KNative Serving functions that can be linked together */
     @Override
     public List<SerializedTemplate> getTemplates() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<SerializedTemplate> results = new ArrayList<>();
+        
+        SerializedTemplate t1 = new SerializedTemplate();
+        t1.setDisplayName("IMPORT");
+        t1.getOutputs().add("importeddata");
+        t1.getSettings().put("Frequency", "1,0");
+        t1.setProcessorType("KSVC");
+        
+        results.add(t1);
+        
+        SerializedTemplate t2 = new SerializedTemplate();
+        t2.setDisplayName("WRITER");
+        t2.getInputs().add("inputdata");
+        t2.setProcessorType("KSVC");
+        results.add(t2);        
+        return results;
     }
+
 }

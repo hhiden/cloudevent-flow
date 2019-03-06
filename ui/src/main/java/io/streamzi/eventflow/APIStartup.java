@@ -15,11 +15,15 @@
  */
 package io.streamzi.eventflow;
 
+import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
+import io.fabric8.openshift.client.DefaultOpenShiftClient;
+import io.fabric8.openshift.client.OpenShiftClient;
+import io.fabric8.openshift.client.OpenShiftConfig;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.context.ApplicationScoped;
 
 /**
  *
@@ -29,9 +33,25 @@ import javax.enterprise.context.ApplicationScoped;
 @Startup
 public class APIStartup {
     private static final Logger logger = Logger.getLogger(APIStartup.class.getName());
-    
+    private static OpenShiftClient osClient;
     @PostConstruct
     public void startup(){
         logger.info("API Startup");
+        osClient = new DefaultOpenShiftClient();
+        
+        
+        try {
+            logger.info("Checking for CRDs at: " + osClient.getOpenshiftUrl());
+            final CustomResourceDefinition flowCRD = osClient.customResourceDefinitions().withName("flows.streamzi.io").get();
+            if (flowCRD == null) {
+                logger.info("Can't find Flow CRDs - Local OpenShift only");
+            }        
+        } catch (Exception e){
+            logger.log(Level.SEVERE, "Error getting CRDs: " + e.getMessage(), e);
+        }
+    }
+    
+    public static OpenShiftClient client(){
+        return osClient;
     }
 }

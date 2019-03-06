@@ -1,7 +1,8 @@
 package io.streamzi.eventflow;
 
 
-import io.streamzi.eventflow.providers.DummyProvider;
+import io.streamzi.eventflow.providers.DummyFlowCRDBackedProvider;
+import io.streamzi.eventflow.providers.KnativeProvider_0_2;
 import io.streamzi.eventflow.serialization.SerializedFlow;
 import io.streamzi.eventflow.serialization.SerializedTemplate;
 import java.util.List;
@@ -21,7 +22,7 @@ import javax.ws.rs.PathParam;
 @ApplicationScoped
 @Path("/api")
 public class API {
-    private EventFlowAPIProvider provider = new DummyProvider();
+    private EventFlowAPIProvider provider = new KnativeProvider_0_2();
     
     private static final Logger logger = Logger.getLogger(API.class.getName());
     
@@ -35,7 +36,7 @@ public class API {
     @Path("/dataflows")
     @GET
     @Produces("application/json")
-    public Set<String> dataflows(){
+    public List<String> dataflows(){
         return provider.getFlows();
     }
  

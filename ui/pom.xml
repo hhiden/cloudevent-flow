@@ -45,6 +45,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-client</artifactId>
+        </dependency>
+        
         <!-- Thorntail Fractions -->
         <dependency>
             <groupId>io.thorntail</groupId>

@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public interface EventFlowAPIProvider {
     /** List the deployed flows */
-    public Set<String> getFlows();
+    public List<String> getFlows();
     
     /** Get a specific flow */
     public SerializedFlow getFlow(String name);

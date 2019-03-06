@@ -67,8 +67,10 @@ public class DummyProvider implements EventFlowAPIProvider {
     }
     
     @Override
-    public Set<String> getFlows() {
-        return flows.keySet();
+    public List<String> getFlows() {
+        List<String> results = new ArrayList<>();
+        flows.keySet().forEach(key -> results.add(key));
+        return results;
     }
 
     @Override
