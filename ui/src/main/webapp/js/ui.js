@@ -359,12 +359,11 @@ function setupBlocksJs(nodeYamlList) {
         blockData = {
             name: template.name,
             description: template.description,
-            family: "Processors"
+            family: template.processorType
         };
 
         // Keep this for saving
         templateMap[template.name] = template;
-        templateMap[template.name].processorType = "DEPLOYABLE_IMAGE";
 
         /* ADD SETTINGS
          var fields = new Array();

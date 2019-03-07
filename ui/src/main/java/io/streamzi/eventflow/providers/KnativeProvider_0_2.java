@@ -17,7 +17,10 @@ package io.streamzi.eventflow.providers;
 
 import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
 import io.streamzi.eventflow.APIStartup;
+import io.streamzi.eventflow.providers.knative.DoneableKChannelCR;
 import io.streamzi.eventflow.providers.knative.DoneableKServiceCR;
+import io.streamzi.eventflow.providers.knative.KChannelCR;
+import io.streamzi.eventflow.providers.knative.KChannelCRList;
 import io.streamzi.eventflow.providers.knative.KServiceCR;
 import io.streamzi.eventflow.providers.knative.KServiceCRList;
 import io.streamzi.eventflow.serialization.SerializedTemplate;
@@ -63,12 +66,43 @@ public class KnativeProvider_0_2 extends FlowCRDBackedProvider {
             template.getInputs().add("input");
             template.getOutputs().add("output");
             template.getAttributes().put("type", "KService");
+            template.setProcessorType("Services");
+            
             results.add(template);
         }
         
         // Get the channels
+        final CustomResourceDefinition kChannelCRD = APIStartup.client().customResourceDefinitions().withName("channels.eventing.knative.dev").get();
+        if (kChannelCRD == null) {
+            logger.severe("Can't find KCHannel CRD");
+            return Collections.emptyList();
+        }        
         
-        
+        List<KChannelCR> channelCrs = APIStartup.client().customResources(
+                kChannelCRD,
+                KChannelCR.class,
+                KChannelCRList.class,
+                DoneableKChannelCR.class)
+                .inNamespace(APIStartup.client().getNamespace()).list().getItems().stream()
+                //.map(flow -> flow.getMetadata().getName())
+                .collect(Collectors.toList());
+
+
+        for(KChannelCR cr : channelCrs) {
+            SerializedTemplate targetTemplate = new SerializedTemplate();
+            targetTemplate.setDisplayName(cr.getMetadata().getName());
+            targetTemplate.getInputs().add("input");
+            targetTemplate.setProcessorType("Outputs");
+            targetTemplate.getAttributes().put("type", "KOutputChannel");
+            results.add(targetTemplate);
+            
+            SerializedTemplate inputTemplate = new SerializedTemplate();
+            inputTemplate.setDisplayName(cr.getMetadata().getName());
+            inputTemplate.getOutputs().add("output");
+            inputTemplate.setProcessorType("Sources");
+            inputTemplate.getAttributes().put("type", "KInputChannel");
+            results.add(inputTemplate);            
+        }
         
         return results;
     }
