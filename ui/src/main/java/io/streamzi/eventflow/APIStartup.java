@@ -18,7 +18,6 @@ package io.streamzi.eventflow;
 import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
-import io.fabric8.openshift.client.OpenShiftConfig;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;

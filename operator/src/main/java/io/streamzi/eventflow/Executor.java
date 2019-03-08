@@ -1,5 +1,6 @@
 package io.streamzi.eventflow;
 
+import io.streamzi.eventflow.providers.KNative_0_2_TargetState;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +35,7 @@ public class Executor {
 
         logger.info("\uD83C\uDF0A Starting Flow Controller \uD83C\uDF0A");
 
-        final FlowWatcher fw = new FlowWatcher(new FlowController());
+        final FlowWatcher fw = new FlowWatcher(new FlowController(KNative_0_2_TargetState.class));
 
         final ExecutorService executor = Executors.newFixedThreadPool(1);
         executor.submit(fw);

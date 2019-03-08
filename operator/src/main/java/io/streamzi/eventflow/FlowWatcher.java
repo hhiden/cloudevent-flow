@@ -4,6 +4,8 @@ import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.openshift.client.DefaultOpenShiftClient;
+import io.fabric8.openshift.client.OpenShiftClient;
 import io.streamzi.eventflow.crds.DoneableFlow;
 import io.streamzi.eventflow.crds.Flow;
 import io.streamzi.eventflow.crds.FlowList;
@@ -11,13 +13,17 @@ import io.streamzi.eventflow.crds.FlowList;
 import java.util.logging.Logger;
 
 public class FlowWatcher implements Watcher<Flow>, Runnable {
-
+    private static OpenShiftClient osClient;    
+    
     private static final Logger logger = Logger.getLogger(FlowWatcher.class.getName());
 
     private FlowController controller;
 
     public FlowWatcher(FlowController controller) {
+        logger.info("FlowWatcher startup");
+        osClient = new DefaultOpenShiftClient();        
         this.controller = controller;
+        controller.setClient(osClient);
     }
 
     @Override
@@ -54,12 +60,8 @@ public class FlowWatcher implements Watcher<Flow>, Runnable {
     @Override
     public void run() {
         logger.info("Starting FlowWatcher");
-
-        //todo: check token is valid
-
-        final CustomResourceDefinition flowCRD = ClientCache.getClient().customResourceDefinitions().withName("flows.streamzi.io").get();
-
-        ClientCache.getClient().customResources(flowCRD, Flow.class, FlowList.class, DoneableFlow.class).inNamespace(ClientCache.getClient().getNamespace()).watch(this);
+        final CustomResourceDefinition flowCRD = osClient.customResourceDefinitions().withName("flows.streamzi.io").get();
+        osClient.customResources(flowCRD, Flow.class, FlowList.class, DoneableFlow.class).inNamespace(osClient.getNamespace()).watch(this);
     }
 
     @Override

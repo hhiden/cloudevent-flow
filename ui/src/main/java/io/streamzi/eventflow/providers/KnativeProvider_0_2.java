@@ -90,14 +90,14 @@ public class KnativeProvider_0_2 extends FlowCRDBackedProvider {
 
         for(KChannelCR cr : channelCrs) {
             SerializedTemplate targetTemplate = new SerializedTemplate();
-            targetTemplate.setDisplayName(cr.getMetadata().getName());
+            targetTemplate.setDisplayName(cr.getMetadata().getName() + "_in");
             targetTemplate.getInputs().add("input");
             targetTemplate.setProcessorType("Outputs");
             targetTemplate.getAttributes().put("type", "KOutputChannel");
             results.add(targetTemplate);
             
             SerializedTemplate inputTemplate = new SerializedTemplate();
-            inputTemplate.setDisplayName(cr.getMetadata().getName());
+            inputTemplate.setDisplayName(cr.getMetadata().getName() + "_out");
             inputTemplate.getOutputs().add("output");
             inputTemplate.setProcessorType("Sources");
             inputTemplate.getAttributes().put("type", "KInputChannel");
