@@ -19,14 +19,18 @@ import io.fabric8.kubernetes.api.model.apiextensions.CustomResourceDefinition;
 import io.streamzi.eventflow.APIStartup;
 import io.streamzi.eventflow.providers.knative.DoneableKChannelCR;
 import io.streamzi.eventflow.providers.knative.DoneableKServiceCR;
+import io.streamzi.eventflow.providers.knative.DoneableKSourceList;
 import io.streamzi.eventflow.providers.knative.KChannelCR;
 import io.streamzi.eventflow.providers.knative.KChannelCRList;
 import io.streamzi.eventflow.providers.knative.KServiceCR;
 import io.streamzi.eventflow.providers.knative.KServiceCRList;
+import io.streamzi.eventflow.providers.knative.KSourceCR;
+import io.streamzi.eventflow.providers.knative.KSourceCRList;
 import io.streamzi.eventflow.serialization.SerializedTemplate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -104,7 +108,43 @@ public class KnativeProvider_0_2 extends FlowCRDBackedProvider {
             results.add(inputTemplate);            
         }
         
+        // Get the sources
+        final CustomResourceDefinition sourceCRD = APIStartup.client().customResourceDefinitions().withName("containersources.sources.eventing.knative.dev").get();
+        if(sourceCRD==null){
+            logger.severe("Can't find Source CRD");
+        } else {
+            logger.info("Source: " + sourceCRD.getMetadata().getName());
+        }        
+
+        List<KSourceCR> sourceCRs = APIStartup.client().customResources(
+                sourceCRD,
+                KSourceCR.class,
+                KSourceCRList.class,
+                DoneableKSourceList.class)
+                .inNamespace(APIStartup.client().getNamespace()).list().getItems().stream()
+                //.map(flow -> flow.getMetadata().getName())
+                .collect(Collectors.toList());        
+        
+        for(KSourceCR source : sourceCRs){
+            SerializedTemplate sourceTemplate = new SerializedTemplate();
+            sourceTemplate.setDisplayName(source.getMetadata().getName());
+            sourceTemplate.getOutputs().add(findChannelName(source));
+            
+            sourceTemplate.setProcessorType("ContainerSources");
+            sourceTemplate.getAttributes().put("type", "KContainerSource");
+            sourceTemplate.getAttributes().put("outputchannel", findChannelName(source));
+            results.add(sourceTemplate);            
+        }
         return results;
+    }
+    
+    private String findChannelName(KSourceCR source){
+        if(source.getSpec().containsKey("sink")){
+            LinkedHashMap<String, Object> sink = (LinkedHashMap)source.getSpec().get("sink");
+            return sink.get("name").toString();
+        } else {
+            return "";
+        }
     }
     
     private void findEnvParameters(Map<String, String> results, HashMap current){

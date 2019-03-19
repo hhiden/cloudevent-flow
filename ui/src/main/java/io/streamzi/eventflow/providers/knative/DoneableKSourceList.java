@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package io.streamzi.eventflow.providers;
+package io.streamzi.eventflow.providers.knative;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.streamzi.eventflow.TargetStateProvider;
-import java.util.logging.Logger;
+import io.fabric8.kubernetes.api.builder.Function;
+import io.fabric8.kubernetes.client.CustomResourceDoneable;
 
 /**
- * Deployer / state manager for KNative 0.2
+ *
  */
-public class KNative_0_2_TargetState extends TargetStateProvider {
-    private static final Logger logger = Logger.getLogger(KNative_0_2_TargetState.class.getName());
-    
-    @Override
-    public void build() throws Exception {
-        logger.info("Flow build");
-        ObjectMapper mapper = new ObjectMapper();
-        logger.info(mapper.writeValueAsString(getFlow()));
+public class DoneableKSourceList extends CustomResourceDoneable<KSourceCR>{
+    public DoneableKSourceList(KSourceCR resource, Function function) {
+        super(resource, function);
     }
-
 }

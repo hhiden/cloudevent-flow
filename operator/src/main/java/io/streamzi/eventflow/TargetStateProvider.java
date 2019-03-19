@@ -44,4 +44,5 @@ public abstract class TargetStateProvider {
     }
     
     public abstract void build() throws Exception;
+    public abstract void debugPrint() throws Exception;
 }

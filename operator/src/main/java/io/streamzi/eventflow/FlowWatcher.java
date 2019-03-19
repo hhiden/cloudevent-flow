@@ -9,6 +9,7 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import io.streamzi.eventflow.crds.DoneableFlow;
 import io.streamzi.eventflow.crds.Flow;
 import io.streamzi.eventflow.crds.FlowList;
+import io.streamzi.eventflow.providers.knative.v02.KNativeTargetState;
 
 import java.util.logging.Logger;
 
@@ -24,6 +25,14 @@ public class FlowWatcher implements Watcher<Flow>, Runnable {
         osClient = new DefaultOpenShiftClient();        
         this.controller = controller;
         controller.setClient(osClient);
+        
+        try {
+            KNativeTargetState ts = new KNativeTargetState();
+            ts.setClient(osClient);
+            ts.debugPrint();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
