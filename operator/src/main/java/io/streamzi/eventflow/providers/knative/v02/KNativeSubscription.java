@@ -15,6 +15,7 @@
  */
 package io.streamzi.eventflow.providers.knative.v02;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.client.CustomResource;
 import java.util.LinkedHashMap;
@@ -113,6 +114,7 @@ public class KNativeSubscription extends CustomResource {
 
     }
 
+    @JsonIgnore
     public String getReplyChannelName() {
         if (spec.containsKey("reply")) {
             LinkedHashMap<String, Object> reply = (LinkedHashMap<String, Object>) spec.get("reply");
@@ -123,6 +125,7 @@ public class KNativeSubscription extends CustomResource {
         }
     }
 
+    @JsonIgnore
     public String getChannelName() {
         if (spec.containsKey("channel")) {
             return ((LinkedHashMap<String, Object>) getSpec().get("channel")).get("name").toString();

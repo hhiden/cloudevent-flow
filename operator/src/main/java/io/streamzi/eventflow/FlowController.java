@@ -50,6 +50,7 @@ public class FlowController {
             logger.info("Done");
 
         } catch (Exception e) {
+            e.printStackTrace();
             logger.log(Level.SEVERE, "Error parsing JSON flow data: " + e.getMessage(), e);
         }
     }

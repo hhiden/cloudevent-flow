@@ -1,5 +1,6 @@
 package io.streamzi.eventflow.serialization;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.fabric8.kubernetes.api.model.KubernetesResource;
@@ -68,6 +69,16 @@ public class SerializedFlow implements KubernetesResource {
         return null;
     }
 
+    @JsonIgnore
+    public boolean isNodeIsolated(String nodeUUID){
+        for(SerializedLink link : links){
+            if(link.getSourceUuid().equals(nodeUUID) || link.getTargetUuid().equals(nodeUUID)){
+                return false;
+            }
+        }
+        return true;
+    }
+    
     public List<SerializedLink> findOutputLinksFromNode(String nodeUUID){
         SerializedNode n = findNode(nodeUUID);
         if(n!=null){
