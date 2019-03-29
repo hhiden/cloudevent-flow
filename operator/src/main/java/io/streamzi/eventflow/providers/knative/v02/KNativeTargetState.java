@@ -100,6 +100,12 @@ public class KNativeTargetState extends TargetStateProvider {
         for(SerializedNode n : flow.getNodes()){
             if(flow.isNodeIsolated(n.getUuid())){
                 results.add(n.getDisplayName() + "-subscription");
+            } else {
+                // If this node has no connected inputs, then the subscription needs to go anyway
+                // because it won't be doing anything useful
+                if(!flow.areAllNodeInputsConnected(n.getUuid())){
+                    results.add(n.getDisplayName() + "-subscription");
+                }
             }
         }
         return results;
