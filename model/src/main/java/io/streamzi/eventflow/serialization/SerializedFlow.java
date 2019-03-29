@@ -69,6 +69,30 @@ public class SerializedFlow implements KubernetesResource {
         return null;
     }
 
+    public boolean areAllNodeInputsConnected(String nodeUUID){
+        SerializedNode n = findNode(nodeUUID);
+        if(n!=null){
+            for(String inputName : n.getInputs()){
+                if(!isNodeInputConnected(nodeUUID, inputName)){
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    @JsonIgnore
+    public boolean isNodeInputConnected(String nodeUUID, String inputName){
+        for(SerializedLink link : links){
+            if(link.getTargetUuid().equals(nodeUUID) && link.getTargetPortName().equals(inputName)){
+                return true;
+            }
+        }       
+        return false;
+    }
+    
     @JsonIgnore
     public boolean isNodeIsolated(String nodeUUID){
         for(SerializedLink link : links){
