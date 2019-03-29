@@ -1,0 +1,16 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: data-processor 
+  namespace: myproject
+spec:
+  runLatest:
+    configuration:
+      revisionTemplate:
+        spec:
+          container:
+            imagePullPolicy: IfNotPresent
+            image: docker.io/matzew/data-processor
+            env:
+            - name: CEF_MULTIPL
+              value: "42"
