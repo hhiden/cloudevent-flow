@@ -49,7 +49,7 @@ public class KNativeSubscription extends CustomResource {
         setApiVersion("eventing.knative.dev/v1alpha1");
 
         spec = new LinkedHashMap<>();
-
+        setStatus(new LinkedHashMap<>());
         LinkedHashMap<String, Object> channel = new LinkedHashMap<>();
         channel.put("apiVersion", "eventing.knative.dev/v1alpha1");
         channel.put("kind", "Channel");

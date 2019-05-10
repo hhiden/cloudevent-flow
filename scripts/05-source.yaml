@@ -1,0 +1,11 @@
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: ContainerSource
+metadata:
+  name: data-src
+spec:
+  image: docker.io/matzew/data-src
+  sink:
+    apiVersion: serving.knative.dev/v1alpha1
+    kind: Service
+    name: data-sink
+

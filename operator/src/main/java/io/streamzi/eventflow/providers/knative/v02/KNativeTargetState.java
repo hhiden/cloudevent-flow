@@ -252,7 +252,7 @@ public class KNativeTargetState extends TargetStateProvider {
 
                 }
             } else {
-                client.customResources(subscriptionCRD, KNativeSubscription.class, KNativeSubscriptionList.class, DoneableKNativeSubscriptionList.class).inNamespace(client.getNamespace()).createOrReplace(subscription);
+                client.customResources(subscriptionCRD, KNativeSubscription.class, KNativeSubscriptionList.class, DoneableKNativeSubscriptionList.class).inNamespace(client.getNamespace()).create(subscription);
             }
 
         } else {

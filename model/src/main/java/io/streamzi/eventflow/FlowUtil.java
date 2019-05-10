@@ -16,5 +16,6 @@ public class FlowUtil {
                 .toLowerCase();
     }
 
+    public static final String NODE_UUID = "NODE_UUUD";
 
 }

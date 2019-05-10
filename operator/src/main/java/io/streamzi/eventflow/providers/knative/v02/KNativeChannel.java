@@ -39,7 +39,6 @@ public class KNativeChannel extends CustomResource {
         this.status = status;
     }
 
-    
     public LinkedHashMap<String, Object> getSpec() {
         return spec;
     }
@@ -53,6 +52,7 @@ public class KNativeChannel extends CustomResource {
     
     public void createSpec(String channelName){
         setKind("Channel");
+        setStatus(new LinkedHashMap<>());
         LinkedHashMap<String, Object> provisioner = new LinkedHashMap<>();
         provisioner.put("apiVersion", "eventing.knative.dev/v1alpha1");
         provisioner.put("kind", "ClusterChannelProvisioner");
