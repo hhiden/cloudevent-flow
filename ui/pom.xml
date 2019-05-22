@@ -89,7 +89,6 @@
                     </properties>
                 </configuration>
             </plugin>
-            <!--
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -98,7 +97,7 @@
                     <images>
                         <image>
                             <alias>ui</alias>
-                            <name>docker.io/rheventflow/eventflow-ui</name>
+                            <name>docker.io/rheventflow/eventflow-knative-ui</name>
                             <build>
                                 <dockerFileDir>${project.basedir}</dockerFileDir>
                             </build>
@@ -116,7 +115,6 @@
                     </execution>
                 </executions>
             </plugin>
-                        -->
         </plugins>
     </build>
 
